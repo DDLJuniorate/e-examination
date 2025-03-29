@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CBT Platform - Daughters of Divine Love Juniorate Abakpa, Enugu</title>
+  <style>
+    /* 
+      BODY BACKGROUND IMAGE:
+      - Replace the URL below with the correct path or base64 data for your image.
+      - background-size: cover ensures the image covers the entire screen.
+      - background-attachment: fixed keeps the image static as you scroll.
+    */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: url("ddljuniorate.jpg") no-repeat center center fixed;
+      background-size: cover;
+
+      
+    }
+    /* Container styling for sections */
+    .container {
+      background: rgba(55, 5, 192, 0.85); /* semi-transparent white */
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2, h3 {
+      text-align: center;
+    }
+    input[type="text"], input[type="password"], select {
+      width: 95%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      display: block;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+      margin: 10px 0;
+      display: block;
+      width: 100%;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #timer {
+      font-size: 1.2em;
+      font-weight: bold;
+      text-align: center;
+      margin: 10px 0;
+    }
+    .question {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .option {
+      margin: 5px 0;
+    }
+    /* Hide sections by default */
+    #examSection, #adminSection {
+      display: none;
+    }
+    /* Fixed Camera Section (middle left-hand side) */
+    #cameraSection {
+      position: fixed;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+      width: 220px;
+      background: #0acddb;
+      border: 1px solid #37c40c;
+      padding: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    #cameraFeed {
+      width: 100%;
+      height: auto;
+      border: none;
+    }
+    /* Admin results table */
+    #resultsList table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #resultsList th, #resultsList td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    #resultsList th {
+      background-color: #f2f2f2;
+    }
+    /* Message for attempts left */
+    #attemptsMessage {
+      text-align: center;
+      font-weight: bold;
+      color: #333;
+    }
+    /* Instructions styling */
+    #instructions {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: #f9f9f9;
+    }
+    #instructions h3 {
+      margin-top: 0;
+      text-align: center;
+    }
+    #instructions ul {
+      list-style: disc;
+      padding-left: 20px;
+    }
+    /* Noise warning styling */
+    #noiseWarning {
+      display: none;
+      color: red;
+      font-weight: bold;
+      text-align: center;
+      margin: 10px 0;
+      font-size: 1.1em;
+    }
+    /* Admin Panel - Question Management */
+    #questionManagement {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      background: #eef;
+    }
+    #questionManagement h3 {
+      text-align: center;
+    }
+    #questionManagement ul {
+      list-style: decimal;
+      padding-left: 20px;
+    }
+    #questionManagement li {
+      margin-bottom: 10px;
+    }
+    #questionManagement button {
+      width: auto;
+      margin-top: 5px;
+      padding: 5px 10px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div id="loginSection" class="container">
+    <h2>DAUGHTERS OF DIVINE LOVE JUNIORATE ABAKPA, ENUGU ENTRANCE EXAMINATION FOR 2025/2026 ACADEMIC SESSION</h2>
+    <input id="fullName" type="text" placeholder="Full Name" autocomplete="off">
+    <input id="username" type="text" placeholder="Username" autocomplete="off">
+    <input id="password" type="password" placeholder="Password" autocomplete="off">
+    <!-- Class Selection -->
+    <select id="classSelect">
+      <option value="">Select Class</option>
+      <option value="JSS1">JSS1</option>
+      <option value="JSS2">JSS2</option>
+      <option value="SS1">SS1</option>
+     <!-- <option value="SS2">SS2</option> -->
+    </select>
+    <button id="loginBtn">Login</button>
+    <p id="loginError" style="color:red; text-align:center;"></p>
+  </div>
+
+  <!-- Exam Section -->
+  <div id="examSection" class="container">
+    <h2>Welcome, <span id="userDisplay"></span></h2>
+    <p id="attemptsMessage"></p>
+    <!-- Instructions -->
+    <div id="instructions">
+      <h3>Exam Instructions</h3>
+      <ul>
+        <li>Attempt all questions.</li>
+        <li>You have only two attempts.</li>
+        <li>If you navigate away from this page it will submit automatically.</li>
+        <li>Camera is watching you and any examination malpractice will result in your result not being published.</li>
+      </ul>
+    </div>
+    <!-- Noise Warning -->
+    <div id="noiseWarning"></div>
+    <button id="startExamBtn">Start Exam</button>
+    <div id="examContent" style="display:none;">
+      <div id="timer">02:30:00</div>
+      <form id="examForm">
+        <!-- Questions will be loaded here -->
+      </form>
+      <button id="submitExamBtn">Submit Exam</button>
+    </div>
+    <!-- Submission Confirmation (no result shown to participant) -->
+    <div id="submissionMessage" style="display:none; text-align:center; font-size:1.2em; color:green;">
+      Your exam has been submitted successfully.
+    </div>
+  </div>
+
+  <!-- Admin Section -->
+  <div id="adminSection" class="container">
+    <h2>Admin Panel</h2>
+    <button id="downloadCSVBtn">Download Results CSV</button>
+    <div id="resultsList"></div>
+    <hr>
+    <!-- Question Management Section -->
+    <div id="questionManagement">
+      <h3>Manage Questions</h3>
+      <label for="manageClassSelect">Select Class:</label>
+      <select id="manageClassSelect">
+        <option value="">Select Class</option>
+        <option value="JSS1">JSS1</option>
+        <option value="JSS2">JSS2</option>
+        <option value="SS1">SS1</option>
+        <!--<option value="SS2">SS2</option> -->
+      </select>
+      <div id="questionList"></div>
+      <h4>Add New Question</h4>
+      <input type="text" id="newQuestionText" placeholder="Question text">
+      <input type="text" id="newOptionA" placeholder="Option A">
+      <input type="text" id="newOptionB" placeholder="Option B">
+      <input type="text" id="newOptionC" placeholder="Option C">
+      <input type="text" id="newOptionD" placeholder="Option D">
+      <label for="newCorrectAnswer">Correct Answer:</label>
+      <select id="newCorrectAnswer">
+          <option value="0">Option A</option>
+          <option value="1">Option B</option>
+          <option value="2">Option C</option>
+          <option value="3">Option D</option>
+      </select>
+      <button id="addQuestionBtn">Add Question</button>
+    </div>
+  </div>
+
+  <!-- Fixed Camera Section -->
+  <div id="cameraSection">
+    <h3 style="text-align:center;">Camera Monitor</h3>
+    <video id="cameraFeed" autoplay muted></video>
+    <p style="font-size: 0.9em; text-align:center;">Ensure your face is visible at all times.</p>
+  </div>
+
+  <script>
+    /*****************************************
+     * 1. User Accounts
+     *****************************************/
+    const users = [
+      { username: "DDLJ2025", password: "passA10" },
+      { username: "DDLJ2025", password: "passB20" },
+      { username: "DDLJ2025", password: "passC30" },
+      { username: "DDLJ2025", password: "passD40" },
+      { username: "DDLJ2025", password: "passE50" },
+      { username: "DDLJ2025", password: "passF60" },
+      { username: "DDLJ2025", password: "passG70" },
+      { username: "DDLJ2025", password: "passH80" },
+      { username: "DDLJ2025", password: "passI90" },
+      { username: "DDLJ2025", password: "passJ10" },
+      { username: "DDLJ2025", password: "passK11" },
+      { username: "DDLJ2025", password: "passL12" },
+      { username: "DDLJ2025", password: "passM13" },
+      { username: "DLJ1014", password: "passN14" },
+      { username: "DLJ1015", password: "passO15" },
+      { username: "DLJ1016", password: "passP16" },
+      { username: "DLJ1017", password: "passQ170" },
+      { username: "DLJ1018", password: "passR180" },
+      { username: "DLJ1019", password: "passS190" },
+      { username: "DDLJ2025", password: "passT200" },
+      { username: "admin", password: "Letmein123@" }
+    ];
+
+    /*****************************************
+     * 2. Distinct Question Sets for Each Class
+     *****************************************/
+    
+    // JSS1: 100 questions
+    
+    const jss1Questions = [
+    {
+    passage: `Read the passage below and answer the question that follows:
+    \n    "Chinedu woke up early in the morning, excited about his school's excursion. He quickly dressed up and packed his lunch. At the bus park, his teacher, Mr. Okeke, gave each student a water bottle and a notebook. The bus left at exactly 8 AM, and they traveled to the museum where they saw ancient artifacts. Chinedu was fascinated by the large elephant skull on display."`,
+    
+    question: "What time did Chinedu's school bus leave?",
+    instruction: "Select the correct time based on the passage above.",
+    options: ["7 AM", "8 AM", "9 AM", "10 AM"],
+    answer: 1
+  },
+  {
+    passage: "", // No passage needed for this question
+    question: "Which word is a noun?",
+    instruction: "Select the word that is a naming word (noun).",
+    options: ["Run", "Happy", "Cat", "Quickly"],
+    answer: 2
+  },
+  {
+    passage: `Read the passage below and answer the question:
+    \n    "During the dry season, the sun shines brightly, and the weather is often hot. Farmers use this time to harvest their crops. However, they must also prepare for the rainy season by planting new seeds."`,
+    
+    question: "Why do farmers harvest their crops during the dry season?",
+    instruction: "Choose the reason that best explains why farmers harvest during this time.",
+    options: [
+      "Because there is plenty of rain",
+      "Because the weather is cool",
+      "Because the crops are ready and there is less rain",
+      "Because it is easier to plant new crops"
+    ],
+    answer: 2
+  }
+,
+      
+
+      { question: "What is the opposite of \"big\"?", options: ["Small", "Tall", "Short", "Wide"], answer: 0 },
+      { question: "Which word is a noun?", options: ["Run", "Happy", "Cat", "Quickly"], answer: 2 },
+      { question: "Choose the correct sentence.", options: ["She go to school every day.", "She goes to school every day.", "She going to school every day.", "She went to school every day."], answer: 1 },
+      { question: "What is the past tense of \"write\"?", options: ["Writed", "Writes", "Wrote", "Writing"], answer: 2 },
+      { question: "How many vowels are in the English alphabet?", options: ["3", "5", "7", "10"], answer: 1 },
+      { question: "What is a group of words that expresses a complete thought?", options: ["A sentence", "A paragraph", "A letter", "A verb"], answer: 0 },
+      { question: "Which word is a pronoun?", options: ["Apple", "She", "Happy", "Eat"], answer: 1 },
+      { question: "Which of these is a punctuation mark?", options: ["Dog", "Happy", "Comma", "Running"], answer: 2 },
+      { question: "What is the plural of \"child\"?", options: ["Childs", "Childes", "Children", "Childrens"], answer: 2 },
+      { question: "Choose the correct spelling.", options: ["Becoz", "Because", "Becoze", "Becaus"], answer: 1 }
+    ];
+    // JSS2: 10 questions
+    const jss2Questions = [
+      { question: "What is 10 + 5?", options: ["12", "15", "20", "25"], answer: 1 },
+      { question: "If a triangle has three sides, how many sides does a square have?", options: ["3", "4", "5", "6"], answer: 1 },
+      { question: "What is 7 × 6?", options: ["42", "48", "56", "36"], answer: 0 },
+      { question: "100 divided by 10 is ____.", options: ["1", "10", "100", "1000"], answer: 1 },
+      { question: "What is the place value of 5 in 452?", options: ["Ones", "Tens", "Hundreds", "Thousands"], answer: 1 },
+      { question: "Which of these numbers is even?", options: ["13", "25", "18", "21"], answer: 2 },
+      { question: "What is ¼ as a decimal?", options: ["0.5", "0.75", "0.25", "1.25"], answer: 2 },
+      { question: "12 + 8 + 5 = ____.", options: ["20", "25", "30", "35"], answer: 1 },
+      { question: "How many minutes are in an hour?", options: ["30", "60", "90", "120"], answer: 1 },
+      { question: "A week has how many days?", options: ["5", "6", "7", "8"], answer: 2 }
+    ];
+    // SS1: 10 questions
+    const ss1Questions = [
+      { question: "What do plants need to make food?", options: ["Sunlight", "Moonlight", "Stars", "Rocks"], answer: 0 },
+      { question: "Which of these is a source of energy?", options: ["Chair", "Sun", "Paper", "Shoes"], answer: 1 },
+      { question: "What do humans breathe in?", options: ["Oxygen", "Carbon dioxide", "Nitrogen", "Helium"], answer: 0 },
+      { question: "Which organ pumps blood in the human body?", options: ["Brain", "Lungs", "Heart", "Stomach"], answer: 2 },
+      { question: "What do we use to see?", options: ["Ears", "Nose", "Eyes", "Hands"], answer: 2 },
+      { question: "Water exists in how many states?", options: ["One", "Two", "Three", "Four"], answer: 2 },
+      { question: "Which of these animals can fly?", options: ["Elephant", "Dog", "Bird", "Fish"], answer: 2 },
+      { question: "Which planet is closest to the Sun?", options: ["Earth", "Mars", "Venus", "Mercury"], answer: 3 },
+      { question: "What do we call animals that eat both plants and meat?", options: ["Carnivores", "Herbivores", "Omnivores", "Insectivores"], answer: 2 },
+      { question: "What is the largest organ in the human body?", options: ["Heart", "Skin", "Brain", "Stomach"], answer: 1 }
+    ];
+    // SS2: 10 questions
+    const ss2Questions = [
+      { question: "Who is the leader of a country?", options: ["Teacher", "President", "Doctor", "Engineer"], answer: 1 },
+      { question: "What is the capital city of the United States?", options: ["New York", "Washington, D.C.", "Los Angeles", "Chicago"], answer: 1 },
+      { question: "A family consists of ____.", options: ["Friends", "Parents and children", "Strangers", "Classmates"], answer: 1 },
+      { question: "What do we use to buy things?", options: ["Money", "Water", "Stones", "Trees"], answer: 0 },
+      { question: "Which direction does the sun rise?", options: ["North", "South", "East", "West"], answer: 2 },
+      { question: "Who helps to keep law and order?", options: ["Farmer", "Policeman", "Tailor", "Chef"], answer: 1 },
+      { question: "A map shows ____.", options: ["Songs", "Places", "Animals", "Games"], answer: 1 },
+      { question: "The study of past events is called ____.", options: ["Science", "History", "Geography", "Mathematics"], answer: 1 },
+      { question: "Which one is a means of transportation?", options: ["Chair", "Bicycle", "Pencil", "Book"], answer: 1 },
+      { question: "Who teaches students in school?", options: ["Doctor", "Pilot", "Teacher", "Driver"], answer: 2 }
+    ];
+
+    // Map each class to its own question array
+    let examQuestionsByClass = {};
+    function loadExamQuestionsByClass() {
+      const stored = localStorage.getItem("examQuestionsByClass");
+      if(stored) {
+        examQuestionsByClass = JSON.parse(stored);
+      } else {
+        examQuestionsByClass = {
+          "JSS1": jss1Questions,
+          "JSS2": jss2Questions,
+          "SS1": ss1Questions,
+          "SS2": ss2Questions
+        };
+        saveExamQuestionsByClass();
+      }
+    }
+    function saveExamQuestionsByClass() {
+      localStorage.setItem("examQuestionsByClass", JSON.stringify(examQuestionsByClass));
+    }
+    // Function to add a new question dynamically (For Admin Panel)
+function addQuestion(passage, question, instruction, options, answer) {
+  jss1Questions.push({ passage, question, instruction, options, answer });
+}
+
+// Function to remove a question by index
+function removeQuestion(index) {
+  if (index >= 0 && index < jss1Questions.length) {
+    jss1Questions.splice(index, 1);
+  }
+}
+
+// Function to display questions in the exam interface
+function displayQuestions() {
+  jss1Questions.forEach((q, index) => {
+    console.log(`Q${index + 1}: ${q.question}`);
+    if (q.passage) {
+      console.log(`Passage: ${q.passage}`);
+    }
+    console.log(`Instruction: ${q.instruction}`);
+    q.options.forEach((option, i) => {
+      console.log(`${String.fromCharCode(97 + i)}) ${option}`);
+    });
+  });
+}
+    loadExamQuestionsByClass();
+
+    /*****************************************
+     * 3. Global Variables
+     *****************************************/
+    let examResults = [];  // loaded from localStorage
+    let examAttempts = {}; // track attempts per user
+    let currentUser = null;
+    let currentClass = ""; // selected class
+    let timerInterval;
+    let remainingTime = 9000; // 2h30m in seconds
+    let examStarted = false;
+    let warningCount = 0;
+    let lastBeepTime = 0;
+
+    /*****************************************
+     * 4. DOM Elements
+     *****************************************/
+    const loginSection   = document.getElementById('loginSection');
+    const examSection    = document.getElementById('examSection');
+    const adminSection   = document.getElementById('adminSection');
+    const cameraSection  = document.getElementById('cameraSection');
+
+    const loginBtn       = document.getElementById('loginBtn');
+    const loginError     = document.getElementById('loginError');
+    const userDisplay    = document.getElementById('userDisplay');
+    const startExamBtn   = document.getElementById('startExamBtn');
+    const examContent    = document.getElementById('examContent');
+    const examForm       = document.getElementById('examForm');
+    const submitExamBtn  = document.getElementById('submitExamBtn');
+    const timerDisplay   = document.getElementById('timer');
+    const downloadCSVBtn = document.getElementById('downloadCSVBtn');
+    const resultsList    = document.getElementById('resultsList');
+    const attemptsMessage= document.getElementById('attemptsMessage');
+    const cameraFeed     = document.getElementById('cameraFeed');
+    const noiseWarningElem = document.getElementById('noiseWarning');
+    const submissionMessage = document.getElementById('submissionMessage');
+
+    const fullNameInput  = document.getElementById('fullName');
+    const usernameInput  = document.getElementById('username');
+    const passwordInput  = document.getElementById('password');
+    const classSelect    = document.getElementById('classSelect');
+
+    /*****************************************
+     * 5. Local Storage Helpers for Results & Attempts
+     *****************************************/
+    function loadExamResults() {
+      const storedResults = localStorage.getItem("examResults");
+      examResults = storedResults ? JSON.parse(storedResults) : [];
+    }
+    function saveExamResults() {
+      localStorage.setItem("examResults", JSON.stringify(examResults));
+      updateAdminResults();
+    }
+    function updateAdminResults() {
+      if (examResults.length === 0) {
+        resultsList.innerHTML = "<p>No exam results available.</p>";
+      } else {
+        let tableHtml = "<table>";
+        tableHtml += "<tr><th>Full Name</th><th>Username</th><th>Class</th><th>Score</th><th>Total</th><th>Date</th></tr>";
+        examResults.forEach(result => {
+          tableHtml += `<tr>
+                          <td>${result.fullName || ""}</td>
+                          <td>${result.username}</td>
+                          <td>${result.className}</td>
+                          <td>${result.score}</td>
+                          <td>${result.total}</td>
+                          <td>${result.date}</td>
+                        </tr>`;
+        });
+        tableHtml += "</table>";
+        resultsList.innerHTML = tableHtml;
+      }
+    }
+    function loadExamAttempts() {
+      const storedAttempts = localStorage.getItem("examAttempts");
+      examAttempts = storedAttempts ? JSON.parse(storedAttempts) : {};
+    }
+    function saveExamAttempts() {
+      localStorage.setItem("examAttempts", JSON.stringify(examAttempts));
+    }
+    loadExamResults();
+    loadExamAttempts();
+
+    /*****************************************
+     * 6. Login Process
+     *****************************************/
+    loginBtn.addEventListener('click', function() {
+      const fullNameVal  = fullNameInput.value.trim();
+      const usernameVal  = usernameInput.value.trim();
+      const passwordVal  = passwordInput.value.trim();
+      const selectedClass= classSelect.value.trim();
+
+      if(usernameVal !== "admin") {
+        if(fullNameVal === "") {
+          loginError.textContent = "Please enter your full name.";
+          return;
+        }
+        if(!selectedClass) {
+          loginError.textContent = "Please select a class.";
+          return;
+        }
+      }
+      const user = users.find(u => u.username === usernameVal && u.password === passwordVal);
+      if(user) {
+        if(usernameVal !== "admin") {
+          user.fullName = fullNameVal;
+          currentClass = selectedClass;
+          const attempts = examAttempts[user.username] || 0;
+          if(attempts >= 2) {
+            loginError.textContent = "You have exhausted your 2 attempts. You cannot take the exam again.";
+            return;
+          } else {
+            attemptsMessage.textContent = "Attempts left: " + (2 - attempts);
+          }
+        }
+        currentUser = user;
+        loginSection.style.display = 'none';
+        if(user.username === "admin") {
+          adminSection.style.display = 'block';
+          updateAdminResults();
+          examSection.style.display = 'none';
+          cameraSection.style.display = 'none';
+        } else {
+          examSection.style.display = 'block';
+          userDisplay.textContent = (user.fullName ? user.fullName + " (" : "") + user.username + (user.fullName ? ")" : "");
+          loadExamQuestions();
+          cameraSection.style.display = 'block';
+          startCamera();
+        }
+      } else {
+        loginError.textContent = "Invalid username or password.";
+      }
+    });
+
+    /*****************************************
+     * 7. Load Exam Questions for the Chosen Class (for Participants)
+     *****************************************/
+    function loadExamQuestions() {
+      const chosenQuestions = examQuestionsByClass[currentClass] || [];
+      examForm.innerHTML = "";
+      chosenQuestions.forEach((q, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.classList.add('question');
+        const questionText = document.createElement('p');
+        questionText.textContent = (index + 1) + ". " + q.question;
+        questionDiv.appendChild(questionText);
+        q.options.forEach((option, i) => {
+          const label = document.createElement('label');
+          label.classList.add('option');
+          const radio = document.createElement('input');
+          radio.type = "radio";
+          radio.name = "question" + index;
+          radio.value = i;
+          label.appendChild(radio);
+          label.appendChild(document.createTextNode(" " + option));
+          questionDiv.appendChild(label);
+          questionDiv.appendChild(document.createElement('br'));
+        });
+        examForm.appendChild(questionDiv);
+      });
+    }
+
+    /*****************************************
+     * 8. Exam Timer
+     *****************************************/
+    function startTimer() {
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        remainingTime--;
+        updateTimerDisplay();
+        if(remainingTime <= 0) {
+          clearInterval(timerInterval);
+          alert("Time's up! Your exam will be submitted automatically.");
+          submitExam();
+        }
+      }, 1000);
+    }
+    function updateTimerDisplay() {
+      let hours = Math.floor(remainingTime / 3600);
+      let minutes = Math.floor((remainingTime % 3600) / 60);
+      let seconds = remainingTime % 60;
+      timerDisplay.textContent =
+        (hours < 10 ? "0" + hours : hours) + ":" +
+        (minutes < 10 ? "0" + minutes : minutes) + ":" +
+        (seconds < 10 ? "0" + seconds : seconds);
+    }
+    startExamBtn.addEventListener('click', function() {
+      startExamBtn.style.display = 'none';
+      examContent.style.display = 'block';
+      examStarted = true;
+      startTimer();
+    });
+
+    /*****************************************
+     * 9. Auto‑Submit on Navigation
+     *****************************************/
+    document.addEventListener("visibilitychange", function() {
+      if(examStarted && document.hidden) {
+        if(warningCount < 3) {
+          warningCount++;
+          alert("Warning " + warningCount + ": You have navigated away from the exam. Please remain on the exam page. (After 3 warnings, your exam will be auto‑submitted.)");
+        } else {
+          alert("You have exceeded the allowed warnings. Your exam will now be submitted.");
+          submitExam();
+        }
+      }
+    });
+    window.addEventListener("beforeunload", function(e) {
+      if(examStarted) {
+        submitExam();
+      }
+    });
+
+    /*****************************************
+     * 10. Submit Exam (No Result Shown to Participant)
+     *****************************************/
+    submitExamBtn.addEventListener('click', function(event) {
+      event.preventDefault();
+      submitExam();
+    });
+    function submitExam() {
+      if(!examStarted) return;
+      clearInterval(timerInterval);
+      let score = 0;
+      const chosenQuestions = examQuestionsByClass[currentClass] || [];
+      chosenQuestions.forEach((q, index) => {
+        const selectedOption = document.querySelector('input[name="question' + index + '"]:checked');
+        if(selectedOption && parseInt(selectedOption.value) === q.answer) {
+          score++;
+        }
+      });
+      examContent.style.display = 'none';
+      examStarted = false;
+      submissionMessage.style.display = 'block';
+      examAttempts[currentUser.username] = (examAttempts[currentUser.username] || 0) + 1;
+      saveExamAttempts();
+      examResults.push({
+        fullName: currentUser.fullName || "",
+        username: currentUser.username,
+        className: currentClass,
+        score: score,
+        total: chosenQuestions.length,
+        date: new Date().toLocaleString()
+      });
+      saveExamResults();
+    }
+
+    /*****************************************
+     * 11. Admin: Download CSV of Exam Results
+     *****************************************/
+    downloadCSVBtn.addEventListener('click', function() {
+      if(examResults.length === 0) {
+        alert("No exam results available.");
+        return;
+      }
+      let csvContent = "Full Name,Username,Class,Score,Total,Date\n";
+      examResults.forEach(result => {
+        csvContent += `${result.fullName},${result.username},${result.className},${result.score},${result.total},${result.date}\n`;
+      });
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "exam_results.csv";
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    /*****************************************
+     * 12. Admin: Question Management
+     *****************************************/
+    // DOM elements for question management
+    const manageClassSelect = document.getElementById("manageClassSelect");
+    const questionListDiv = document.getElementById("questionList");
+    const newQuestionText = document.getElementById("newQuestionText");
+    const newOptionA = document.getElementById("newOptionA");
+    const newOptionB = document.getElementById("newOptionB");
+    const newOptionC = document.getElementById("newOptionC");
+    const newOptionD = document.getElementById("newOptionD");
+    const newCorrectAnswer = document.getElementById("newCorrectAnswer");
+    const addQuestionBtn = document.getElementById("addQuestionBtn");
+
+    manageClassSelect.addEventListener("change", function() {
+      renderQuestionList();
+    });
+
+    function renderQuestionList() {
+      const selectedClass = manageClassSelect.value;
+      if (!selectedClass) {
+        questionListDiv.innerHTML = "";
+        return;
+      }
+      const questions = examQuestionsByClass[selectedClass] || [];
+      let html = "<ul>";
+      questions.forEach((q, index) => {
+        html += `<li>
+                   <strong>Q${index + 1}:</strong> ${q.question}
+                   <button onclick="removeQuestion('${selectedClass}', ${index})">Remove</button>
+                 </li>`;
+      });
+      html += "</ul>";
+      questionListDiv.innerHTML = html;
+    }
+
+    window.removeQuestion = function(selectedClass, index) {
+      if(confirm("Are you sure you want to remove this question?")) {
+        examQuestionsByClass[selectedClass].splice(index, 1);
+        saveExamQuestionsByClass();
+        renderQuestionList();
+      }
+    };
+
+    addQuestionBtn.addEventListener("click", function() {
+      const selectedClass = manageClassSelect.value;
+      if (!selectedClass) {
+        alert("Please select a class.");
+        return;
+      }
+      const questionText = newQuestionText.value.trim();
+      const optionA = newOptionA.value.trim();
+      const optionB = newOptionB.value.trim();
+      const optionC = newOptionC.value.trim();
+      const optionD = newOptionD.value.trim();
+      const correctAnswer = parseInt(newCorrectAnswer.value);
+      if (!questionText || !optionA || !optionB || !optionC || !optionD) {
+        alert("Please fill in all fields.");
+        return;
+      }
+      const newQuestion = {
+        question: questionText,
+        options: [optionA, optionB, optionC, optionD],
+        answer: correctAnswer
+      };
+      examQuestionsByClass[selectedClass].push(newQuestion);
+      saveExamQuestionsByClass();
+      newQuestionText.value = "";
+      newOptionA.value = "";
+      newOptionB.value = "";
+      newOptionC.value = "";
+      newOptionD.value = "";
+      newCorrectAnswer.value = "0";
+      renderQuestionList();
+    });
+
+    /*****************************************
+     * 13. Camera & Audio Monitoring
+     *****************************************/
+    function startCamera() {
+      if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+          .then(function(stream) {
+            cameraFeed.srcObject = stream;
+            cameraFeed.play();
+            startAudioMonitoring(stream);
+            monitorCamera();
+          })
+          .catch(function(err) {
+            alert("Camera and/or audio access denied or not available. You must enable both for the exam.");
+          });
+      } else {
+        alert("Camera/Audio not supported in your browser.");
+      }
+    }
+    function startAudioMonitoring(stream) {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioContext.createMediaStreamSource(stream);
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+      source.connect(analyser);
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      function checkAudio() {
+        analyser.getByteTimeDomainData(dataArray);
+        let sum = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+          let sample = dataArray[i] - 128;
+          sum += sample * sample;
+        }
+        let rms = Math.sqrt(sum / dataArray.length);
+        if(rms > 20) {
+          triggerNoiseAlert();
+        }
+        requestAnimationFrame(checkAudio);
+      }
+      checkAudio();
+    }
+    function triggerNoiseAlert() {
+      noiseWarningElem.style.display = "block";
+      noiseWarningElem.textContent = "WARNING: Background noise detected! Please keep quiet!";
+      let now = Date.now();
+      if(now - lastBeepTime > 2000) {
+        playBeep();
+        lastBeepTime = now;
+      }
+    }
+    function playBeep() {
+      const context = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = context.createOscillator();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(1000, context.currentTime);
+      const gainNode = context.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+      oscillator.start();
+      gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.5);
+      oscillator.stop(context.currentTime + 0.5);
+    }
+    function monitorCamera() {
+      setInterval(function(){
+        if(cameraFeed.videoWidth === 0 || cameraFeed.videoHeight === 0) {
+          alert("Camera feed lost. Please ensure you are visible to the camera.");
+        }
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
